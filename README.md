@@ -1,30 +1,32 @@
-# Website Contact Extractor
+# Google Maps and Google Search Scraper
 
-This is a Flask web application that scrapes a website and extracts contact information such as email addresses, phone numbers, and social media links.
+This is a Python script that scrapes Google Maps and Google Search for businesses based on a service and location. It then filters the results based on whether the business has a website, if the website is a 404, or if it redirects to a social media page. Finally, it outputs the data in either CSV or JSON format.
 
 ## Features
 
--   Extracts email addresses, phone numbers, and social media links from a website.
--   Crawls the website to a specified depth to find more contact information.
--   Exports the extracted data to a CSV file.
--   Error handling and retries to make the scraper more reliable.
+-   Scrapes Google Maps and Google Search for businesses.
+-   Filters the results based on whether the business has a website.
+-   Outputs the data in either CSV or JSON format.
 
 ## How to Run
 
 1.  Install the dependencies:
     ```
     pip install -r requirements.txt
+    pip install selenium
+    sudo apt-get update && sudo apt-get install -y chromium-driver
     ```
 2.  Run the application:
     ```
-    python main.py
+    python main_scraper.py
     ```
-3.  Open your browser and go to `http://localhost:5000`.
 
-## API Endpoints
+## Files
 
--   `POST /api/extract`: Extracts contact information from a website.
-    -   `url`: The URL of the website to scrape.
-    -   `crawl_depth`: The depth to crawl the website (0, 1, or 2).
--   `POST /api/export-csv`: Exports the extracted contact information to a CSV file.
-    -   The body of the request should be the JSON response from the `/api/extract` endpoint.
+-   `main_scraper.py`: The main script to run the scraper.
+-   `google_maps_scraper.py`: Scrapes Google Maps for businesses.
+-   `google_search_scraper.py`: Scrapes Google Search for businesses.
+-   `filter.py`: Filters the scraped data.
+-   `output.py`: Outputs the data in either CSV or JSON format.
+-   `output.csv`: The output of the scraper in CSV format.
+-   `output.json`: The output of the scraper in JSON format.
