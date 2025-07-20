@@ -32,9 +32,9 @@ def extract_contact_info(url, crawl_depth=0):
         current_depth = 0
         
         # Set strict limits to prevent timeouts
-        max_pages_per_level = 5  # Only process up to 5 pages per depth level
-        request_timeout = 5      # 5 second timeout for each request
-        total_page_limit = 10    # Maximum total pages to scan
+        max_pages_per_level = 10  # Only process up to 10 pages per depth level
+        request_timeout = 10      # 10 second timeout for each request
+        total_page_limit = 20    # Maximum total pages to scan
         
         # Set up a session with headers to look like a browser
         session = requests.Session()
@@ -59,6 +59,7 @@ def extract_contact_info(url, crawl_depth=0):
                 try:
                     # Send HTTP request with timeout
                     response = session.get(current_url, timeout=request_timeout, allow_redirects=True)
+                    response.raise_for_status()  # Raise an exception for bad status codes
                     
                     # Skip non-HTML content
                     content_type = response.headers.get('Content-Type', '').lower()
@@ -130,7 +131,7 @@ def extract_contact_info(url, crawl_depth=0):
                                                                              for keyword in ['contact', 'footer', 'about']))
                     
                     # If we found contact sections, focus on those first
-                    content_to_search = html_content
+                    content_to_search = soup.get_text()
                     if contact_sections:
                         content_to_search = ' '.join(section.get_text() for section in contact_sections)
                     
@@ -150,6 +151,9 @@ def extract_contact_info(url, crawl_depth=0):
                     if name_titles:
                         all_names_titles.extend(name_titles)
                     
+                except requests.exceptions.HTTPError as e:
+                    print(f"HTTP error for {current_url}: {e}")
+                    continue
                 except requests.exceptions.Timeout:
                     print(f"Request timed out for {current_url}")
                     continue
@@ -161,7 +165,7 @@ def extract_contact_info(url, crawl_depth=0):
                     continue
                 
                 # Sleep briefly between requests to be respectful
-                time.sleep(0.5)
+                time.sleep(1)
             
             current_depth += 1
         
